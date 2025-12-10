@@ -1,0 +1,19 @@
+{
+  "name": "bennier-coupons",
+  "version": "1.0.0",
+  "description": "Basic Takeads-backed coupons site for coupons.bennier.dev",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development nodemon server.js"
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "dotenv": "^16.4.0",
+    "ejs": "^3.1.10",
+    "express": "^4.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

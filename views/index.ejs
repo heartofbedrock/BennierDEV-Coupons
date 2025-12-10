@@ -1,0 +1,31 @@
+<% layout('layout') %>
+
+<section>
+  <h2>Featured cashback offers</h2>
+  <p class="lead">
+    Click an offer to go to the merchant via our tracking link. Once your Takeads
+    integration is live, this will show real-time coupons and cashback deals.
+  </p>
+
+  <div class="offers-grid">
+    <% if (offers && offers.length) { %>
+      <% offers.forEach(function(offer) { %>
+        <article class="offer-card">
+          <h3><%= offer.merchant %></h3>
+          <p class="offer-title"><%= offer.title %></p>
+          <% if (offer.rate) { %>
+            <p class="offer-rate">Up to <strong><%= offer.rate %></strong> cashback</p>
+          <% } %>
+          <% if (offer.description) { %>
+            <p class="offer-description"><%= offer.description %></p>
+          <% } %>
+          <a href="<%= offer.url %>" class="btn" target="_blank" rel="noopener noreferrer">
+            Activate offer
+          </a>
+        </article>
+      <% }); %>
+    <% } else { %>
+      <p>No offers available right now. Please check back later.</p>
+    <% } %>
+  </div>
+</section>
