@@ -1,0 +1,46 @@
+<section class="profile-section">
+  <div class="section-header">
+    <h2>Account dashboard</h2>
+    <p class="lead">
+      Auth0 powers your identity and session. This page surfaces the information returned by
+      your provider and makes it easy to sign out when finished.
+    </p>
+  </div>
+
+  <% if (authMissing) { %>
+    <div class="alert">
+      <strong>Auth0 is not configured.</strong> Set up the required environment variables so members
+      can log in.
+    </div>
+  <% } else if (!user) { %>
+    <div class="alert">
+      <strong>You are not signed in yet.</strong> Use the link in the header to authenticate.
+    </div>
+  <% } else { %>
+    <dl class="profile-details">
+      <div>
+        <dt>Full name</dt>
+        <dd><%= user.name || user.nickname || 'Not available' %></dd>
+      </div>
+      <div>
+        <dt>Email</dt>
+        <dd><%= user.email || 'Not available' %></dd>
+      </div>
+      <div>
+        <dt>Auth0 ID</dt>
+        <dd><%= user.sub || 'Not available' %></dd>
+      </div>
+      <div>
+        <dt>Locale</dt>
+        <dd><%= user.locale || 'Not specified' %></dd>
+      </div>
+    </dl>
+
+    <p class="lead">
+      Your identity lives in Auth0 (and whatever social identity provider you chose).
+      Update your profile there if anything changes.
+    </p>
+
+    <a href="/logout" class="btn">Sign out</a>
+  <% } %>
+</section>

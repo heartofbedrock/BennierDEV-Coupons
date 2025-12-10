@@ -1,19 +1,55 @@
 require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
+const expressLayouts = require('express-ejs-layouts');
+const { auth, requiresAuth } = require('express-openid-connect');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.set('view engine', 'ejs');
-app.set('views', __dirname + '/views');
+const auth0Domain = process.env.AUTH0_DOMAIN;
+const auth0ClientId = process.env.AUTH0_CLIENT_ID;
+const auth0Secret = process.env.AUTH0_SECRET;
+const auth0BaseUrl = process.env.AUTH0_BASE_URL || `http://localhost:${PORT}`;
+const authEnabled = Boolean(auth0Domain && auth0ClientId && auth0Secret);
 
+const authConfig = {
+  authRequired: false,
+  auth0Logout: true,
+  secret: auth0Secret,
+  baseURL: auth0BaseUrl,
+  clientID: auth0ClientId,
+  issuerBaseURL: auth0Domain ? `https://${auth0Domain}` : undefined
+};
+
+if (authEnabled) {
+  app.use(auth(authConfig));
+} else {
+  console.warn(
+    'Auth0 configuration incomplete. Set AUTH0_DOMAIN, AUTH0_CLIENT_ID, and AUTH0_SECRET to enable login.'
+  );
+}
+
+app.use(expressLayouts);
+app.set('view engine', 'ejs');
+app.set('layout', 'layout');
+app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
 
-/**
- * MOCK DATA for initial development
- * Replace with real Takeads API call in fetchOffersFromTakeads()
- */
+app.use((req, res, next) => {
+  res.locals.user = req.oidc?.user || null;
+  res.locals.authEnabled = authEnabled;
+  res.locals.authMissing = !authEnabled;
+  next();
+});
+
+const authGuard = authEnabled
+  ? requiresAuth()
+  : (req, res, next) => {
+      res.locals.authMissing = true;
+      next();
+    };
+
 const mockOffers = [
   {
     id: 1,
@@ -41,41 +77,9 @@ const mockOffers = [
   }
 ];
 
-/**
- * TODO: Plug in Takeads API here
- *
- * When you’re ready, replace the mock implementation with a live call
- * to Takeads’ coupon/merchant endpoint. Example sketch:
- *
- *   const baseURL = process.env.TAKEADS_BASE_URL;
- *   const platformKey = process.env.TAKEADS_PLATFORM_KEY;
- *
- *   const resp = await axios.get(
- *     baseURL + '/v1/product/monetize-api/v1/coupon/search',
- *     {
- *       headers: {
- *         // Check Takeads docs for the exact header name:
- *         // e.g. 'Platform-Key': platformKey
- *       },
- *       params: {
- *         page: 1,
- *         pageSize: 20
- *         // add filters as needed
- *       }
- *     }
- *   );
- *
- *   Then map resp.data into the structure used by the template.
- *
- * See: https://developers.takeads.com and their Postman collection :contentReference[oaicite:2]{index=2}
- */
+const TAKEADS_SEARCH_PATH = '/v1/product/monetize-api/v1/coupon/search';
+
 async function fetchOffersFromTakeads() {
-  // For now, just return mock data so the site works out of the box.
-  return mockOffers;
-
-  // Once you are ready, comment the line above and uncomment / adapt the following:
-
-  /*
   const baseURL = process.env.TAKEADS_BASE_URL || 'https://api.takeads.com';
   const platformKey = process.env.TAKEADS_PLATFORM_KEY;
 
@@ -85,41 +89,47 @@ async function fetchOffersFromTakeads() {
   }
 
   try {
-    const resp = await axios.get(
-      baseURL + '/v1/product/monetize-api/v1/coupon/search',
-      {
-        headers: {
-          // Replace with the header name Takeads expects:
-          // e.g. 'Platform-Key': platformKey
-        },
-        params: {
-          page: 1,
-          pageSize: 20
-        }
+    const resp = await axios.get(`${baseURL}${TAKEADS_SEARCH_PATH}`, {
+      headers: {
+        'Platform-Key': platformKey,
+        Accept: 'application/json'
+      },
+      params: {
+        page: 1,
+        pageSize: 24
       }
-    );
+    });
 
-    // Adapt this mapping to match real response format
-    const offers = (resp.data.items || []).map((item, idx) => ({
-      id: idx,
-      merchant: item.advertiserName || 'Merchant',
-      title: item.title || 'Cashback offer',
-      description: item.description || '',
-      url: item.trackingUrl || '#',
-      rate: item.commissionRate || ''
-    }));
+    const items = resp.data?.items || resp.data?.data || resp.data || [];
+    const offers = (Array.isArray(items) ? items : []).map((item, idx) => {
+      const rateValue =
+        item.cashback || item.commissionRate || item.rewardRate || item.rate;
+      const rate = typeof rateValue === 'number' ? `${rateValue}%` : rateValue || '';
+
+      return {
+        id: item.id || item.couponId || idx,
+        merchant: item.advertiserName || item.merchantName || item.brand || 'Merchant',
+        title: item.title || item.name || 'Cashback offer',
+        description: item.description || item.summary || '',
+        url: item.trackingUrl || item.offerUrl || item.redirectUrl || '#',
+        rate
+      };
+    });
 
     return offers.length ? offers : mockOffers;
   } catch (err) {
     console.error('Error calling Takeads API, using mock offers:', err.message);
     return mockOffers;
   }
-  */
 }
 
-app.get('/', async (req, res) => {
+app.get('/', authGuard, async (req, res) => {
   const offers = await fetchOffersFromTakeads();
   res.render('index', { offers });
+});
+
+app.get('/profile', authGuard, (req, res) => {
+  res.render('profile', { user: req.oidc?.user || null });
 });
 
 app.listen(PORT, () => {

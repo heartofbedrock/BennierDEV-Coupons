@@ -4,13 +4,29 @@
   <meta charset="UTF-8" />
   <title>Coupons & Cashback – Bennier</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="takeads-platform-verification" content="7a1c1ccb-2358-410b-b532-63e467b34cb6" />
   <link rel="stylesheet" href="/styles.css" />
 </head>
 <body>
   <header class="site-header">
-    <div class="container">
-      <h1><a href="/">Bennier Coupons & Cashback</a></h1>
-      <p class="tagline">Activate cashback offers from top merchants via Takeads.</p>
+    <div class="container header-inner">
+      <div>
+        <h1><a href="/">Bennier Coupons & Cashback</a></h1>
+        <p class="tagline">Activate cashback offers from top merchants via Takeads.</p>
+      </div>
+      <nav class="auth-nav" aria-label="Account">
+        <% if (authEnabled) { %>
+          <% if (user) { %>
+            <span class="auth-greeting">Hey <%= user.nickname || user.name || 'member' %></span>
+            <a href="/profile" class="auth-link">My profile</a>
+            <a class="btn btn-outline" href="/logout">Log out</a>
+          <% } else { %>
+            <a class="btn" href="/login">Sign in with Auth0</a>
+          <% } %>
+        <% } else { %>
+          <span class="auth-warning">Auth0 is not configured yet.</span>
+        <% } %>
+      </nav>
     </div>
   </header>
 

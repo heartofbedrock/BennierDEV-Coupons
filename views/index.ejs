@@ -1,58 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Coupons & Cashback – Bennier</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="/styles.css" />
-  <meta name="takeads-platform-verification" content="7a1c1ccb-2358-410b-b532-63e467b34cb6">
-</head>
-<body>
-  <header class="site-header">
-    <div class="container">
-      <h1><a href="/">Bennier Coupons & Cashback</a></h1>
-      <p class="tagline">Activate cashback offers from top merchants via Takeads.</p>
+<section class="offers-section">
+  <div class="section-header">
+    <h2>Featured cashback offers</h2>
+    <p class="lead">
+      Click an offer to go to the merchant via our tracking link. Once your Takeads
+      integration is live, this will show real-time coupons and cashback deals.
+    </p>
+  </div>
+
+  <% if (authMissing) { %>
+    <div class="alert">
+      <strong>Auth0 is not configured.</strong> Set <code>AUTH0_DOMAIN</code>, <code>AUTH0_CLIENT_ID</code>, and
+      <code>AUTH0_SECRET</code> in your environment so visitors can authenticate before viewing offers.
     </div>
-  </header>
+  <% } %>
 
-  <main class="site-main">
-    <div class="container">
-      <section>
-        <h2>Featured cashback offers</h2>
-        <p class="lead">
-          Click an offer to go to the merchant via our tracking link. Once your Takeads
-          integration is live, this will show real-time coupons and cashback deals.
-        </p>
-
-        <div class="offers-grid">
-          <% if (offers && offers.length) { %>
-            <% offers.forEach(function(offer) { %>
-              <article class="offer-card">
-                <h3><%= offer.merchant %></h3>
-                <p class="offer-title"><%= offer.title %></p>
-                <% if (offer.rate) { %>
-                  <p class="offer-rate">Up to <strong><%= offer.rate %></strong> cashback</p>
-                <% } %>
-                <% if (offer.description) { %>
-                  <p class="offer-description"><%= offer.description %></p>
-                <% } %>
-                <a href="<%= offer.url %>" class="btn" target="_blank" rel="noopener noreferrer">
-                  Activate offer
-                </a>
-              </article>
-            <% }); %>
-          <% } else { %>
-            <p>No offers available right now. Please check back later.</p>
+  <div class="offers-grid">
+    <% if (offers && offers.length) { %>
+      <% offers.forEach(function(offer) { %>
+        <article class="offer-card">
+          <h3><%= offer.merchant %></h3>
+          <p class="offer-title"><%= offer.title %></p>
+          <% if (offer.rate) { %>
+            <p class="offer-rate">Up to <strong><%= offer.rate %></strong> cashback</p>
           <% } %>
-        </div>
-      </section>
-    </div>
-  </main>
-
-  <footer class="site-footer">
-    <div class="container">
-      <p>&copy; <%= new Date().getFullYear() %> Bennier. Cashback data via Takeads.</p>
-    </div>
-  </footer>
-</body>
-</html>
+          <% if (offer.description) { %>
+            <p class="offer-description"><%= offer.description %></p>
+          <% } %>
+          <a href="<%= offer.url %>" class="btn" target="_blank" rel="noopener noreferrer">
+            Activate offer
+          </a>
+        </article>
+      <% }); %>
+    <% } else { %>
+      <p>No offers available right now. Please check back later.</p>
+    <% } %>
+  </div>
+</section>

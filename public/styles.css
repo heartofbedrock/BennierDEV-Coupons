@@ -27,6 +27,14 @@ a {
   border-bottom: 1px solid #1f2937;
 }
 
+.site-header .header-inner {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
 .site-header h1 {
   margin: 0;
   font-size: 1.6rem;
@@ -56,6 +64,54 @@ a {
 h2 {
   font-size: 1.4rem;
   margin-bottom: 0.5rem;
+}
+
+.section-header {
+  margin-bottom: 1.25rem;
+}
+
+.auth-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.auth-nav .auth-greeting {
+  font-size: 0.95rem;
+  color: #dbeafe;
+}
+
+.auth-nav .auth-link {
+  color: #dbeafe;
+  font-size: 0.95rem;
+  border-bottom: 1px solid transparent;
+  padding-bottom: 0.15rem;
+}
+
+.auth-nav .auth-link:hover {
+  border-color: #dbeafe;
+}
+
+.auth-warning {
+  color: #f8a4a9;
+  font-size: 0.9rem;
+}
+
+.btn-outline {
+  background: transparent;
+  color: #ffffff;
+  border-color: #ffffff;
+  box-shadow: none;
+}
+
+.alert {
+  background: #1f2937;
+  border: 1px solid #334155;
+  padding: 0.9rem 1rem;
+  border-radius: 0.75rem;
+  margin-bottom: 1.25rem;
+  color: #f8fafc;
+  font-size: 0.95rem;
 }
 
 .lead {
@@ -119,4 +175,51 @@ h2 {
   background: #1d4ed8;
   transform: translateY(-1px);
   box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+}
+
+.profile-section {
+  background: #040810;
+  border: 1px solid #1f2937;
+  border-radius: 0.85rem;
+  padding: 1.5rem;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.8);
+}
+
+.profile-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.profile-details dt {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+}
+
+.profile-details dd {
+  margin: 0;
+  font-size: 1rem;
+  color: #e5e7eb;
+}
+
+.offers-grid p {
+  margin: 0;
+  text-align: center;
+  color: #cbd5f5;
+}
+
+.auth-nav .auth-link,
+.auth-nav .btn {
+  text-decoration: none;
+}
+
+@media (max-width: 640px) {
+  .auth-nav {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }

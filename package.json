@@ -11,7 +11,9 @@
     "axios": "^1.7.0",
     "dotenv": "^16.4.0",
     "ejs": "^3.1.10",
-    "express": "^4.19.0"
+    "express": "^4.19.0",
+    "express-ejs-layouts": "^2.5.1",
+    "express-openid-connect": "^2.19.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.0"
