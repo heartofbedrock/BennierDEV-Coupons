@@ -125,11 +125,19 @@ async function fetchOffersFromTakeads() {
 
 app.get('/', authGuard, async (req, res) => {
   const offers = await fetchOffersFromTakeads();
-  res.render('index', { offers });
+  res.render('index', {
+    offers,
+    authEnabled,
+    authMissing: !authEnabled
+  });
 });
 
 app.get('/profile', authGuard, (req, res) => {
-  res.render('profile', { user: req.oidc?.user || null });
+  res.render('profile', {
+    user: req.oidc?.user || null,
+    authEnabled,
+    authMissing: !authEnabled
+  });
 });
 
 app.listen(PORT, () => {
